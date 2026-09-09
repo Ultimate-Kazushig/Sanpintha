@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>献立とスケジュール</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #F7F4EF;
+    --card: #FFFFFF;
+    --ink: #262420;
+    --ink-soft: #9A9385;
+    --ink-faint: #C7C1B4;
+    --accent: #C1694D;
+    --accent-soft: #F2E1D8;
+    --line: #EDE8DF;
+    --error: #B84A3E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    padding: 32px 20px 60px;
+    font-weight: 300;
+  }
+
+  .wrap { max-width: 440px; margin: 0 auto; }
+
+  header { margin-bottom: 24px; }
+
+  header h1 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin: 0 0 2px;
+    letter-spacing: 0.02em;
+  }
+
+  header p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Meal Card ---------- */
+
+  .meal-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 22px 20px 8px;
+    box-shadow: 0 8px 24px rgba(60, 50, 30, 0.06);
+    margin-bottom: 14px;
+  }
+
+  .meal-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .meal-card-head-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meal-card-head .day-name {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .today-pill {
+    font-size: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 3px 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .card-clear-btn {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 2px;
+  }
+
+  .card-clear-btn:active { color: var(--ink-soft); }
+
+  .meal-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .meal-label { flex: 0 0 64px; padding-top: 2px; }
+
+  .meal-label .name {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .meal-label .time {
+    display: block;
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  .meal-input {
+    flex: 1 1 auto;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 3px 2px 6px;
+  }
+
+  .meal-input::placeholder { color: var(--ink-faint); }
+
+  .meal-input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ---------- Day selector ---------- */
+
+  .day-selector {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 26px;
+  }
+
+  .day-pill {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: var(--card);
+    border: 1px solid var(--line);
+    cursor: pointer;
+  }
+
+  .day-pill.active {
+    background: var(--accent);
+    color: #FFFDFB;
+    border-color: var(--accent);
+  }
+
+  .status {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    min-height: 16px;
+    margin: -6px 0 20px;
+    transition: opacity 0.4s;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  /* ---------- Section title ---------- */
+
+  .section-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 4px 0 12px;
+  }
+
+  /* ---------- Schedule ---------- */
+
+  .schedule-start-btn {
+    width: 100%;
+    text-align: center;
+    padding: 13px 0;
+    border-radius: 14px;
+    border: 1px dashed var(--ink-faint);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .schedule-start-btn:active { background: var(--accent-soft); }
+
+  .calendar-pop {
+    display: none;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px 14px 6px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 24px rgba(60, 50, 30, 0.08);
+  }
+
+  .calendar-pop.open { display: block; }
+
+  .cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .cal-head .label {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .cal-nav {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 15px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+
+  .cal-dow {
+    font-size: 10px;
+    color: var(--ink-faint);
+    padding-bottom: 4px;
+  }
+
+  .cal-day {
+    font-size: 13px;
+    padding: 7px 0;
+    border-radius: 10px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .cal-day.faded { color: var(--ink-faint); }
+  .cal-day.today { color: var(--accent); font-weight: 500; }
+  .cal-day.selected { background: var(--accent); color: #FFFDFB; }
+  .cal-day.empty { cursor: default; }
+
+  .schedule-input-row {
+    display: none;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 16px rgba(60, 50, 30, 0.05);
+  }
+
+  .schedule-input-row.open { display: block; }
+
+  .schedule-input-row .selected-date {
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .schedule-input-row .row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .schedule-input-row input[type="text"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .schedule-input-row input[type="text"]::placeholder { color: var(--ink-faint); }
+
+  .schedule-input-row button {
+    flex: 0 0 auto;
+    border: none;
+    background: var(--accent);
+    color: #FFFDFB;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 11px 14px;
+    box-shadow: 0 2px 10px rgba(60, 50, 30, 0.04);
+  }
+
+  .task-date {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .task-text {
+    flex: 1 1 auto;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .task-del {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  .task-empty {
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 4px 2px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>献立とスケジュール</h1>
+    <p>曜日をタップして切り替えられます・このブラウザに保存されます</p>
+  </header>
+
+  <div class="meal-card" id="mealCard"></div>
+  <div class="day-selector" id="daySelector"></div>
+  <div class="status" id="status"></div>
+
+  <div class="section-title">スケジュール</div>
+  <button type="button" class="schedule-start-btn" id="scheduleStartBtn">スケジュールを入力する</button>
+
+  <div class="calendar-pop" id="calendarPop"></div>
+
+  <div class="schedule-input-row" id="scheduleInputRow">
+    <div class="selected-date" id="selectedDateLabel"></div>
+    <div class="row">
+      <input type="text" id="scheduleText" placeholder="予定を入力">
+      <button type="button" id="scheduleAddBtn">追加</button>
+    </div>
+  </div>
+
+  <div class="task-list" id="taskList"></div>
+</div>
+
+<script>
+const DAY_NAMES = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"];
+const DAY_SHORT = ["月", "火", "水", "木", "金", "土", "日"];
+const WEEKDAY_JP = ["日", "月", "火", "水", "木", "金", "土"];
+
+const MEAL_TYPES = [
+  { key: "breakfast", label: "朝食", placeholder: "朝食を入力", female: "8:00", male: "10:00" },
+  { key: "lunch", label: "昼食", placeholder: "昼食を入力", female: "12:00", male: "12:00" },
+  { key: "dinner", label: "晩ご飯", placeholder: "夕食を入力", female: "19:00", male: "17:00" }
+];
+
+const DEFAULT_DATA = {
+  "月曜日": { dinner: "しゃけ" },
+  "火曜日": { dinner: "惣菜" },
+  "水曜日": {},
+  "木曜日": { dinner: "しゃけ" },
+  "金曜日": { dinner: "惣菜" },
+  "土曜日": {},
+  "日曜日": {}
+};
+
+function todayIndex() {
+  const jsDay = new Date().getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
+const STORAGE_KEY = "meal-schedule:week";
+let scheduleData = {};
+let selectedDay = DAY_NAMES[todayIndex()];
+
+function buildEmptySchedule() {
+  const data = {};
+  DAY_NAMES.forEach(day => { data[day] = { breakfast: "", lunch: "", dinner: "" }; });
+  return data;
+}
+
+function mergeWithDefaults(saved) {
+  const base = buildEmptySchedule();
+  Object.keys(base).forEach(day => {
+    if (saved && saved[day]) {
+      Object.assign(base[day], saved[day]);
+    }
+  });
+  return base;
+}
+
+function showStatus(text, isError) {
+  const el = document.getElementById("status");
+  el.textContent = text;
+  el.style.color = isError ? "var(--error)" : "";
+  el.style.opacity = "1";
+  if (!isError) {
+    setTimeout(() => { el.style.opacity = "0"; }, 1200);
+  }
+}
+
+function saveSchedule() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleData));
+    showStatus("保存しました");
+  } catch (e) {
+    showStatus("保存に失敗しました", true);
+  }
+}
+
+function renderMealCard() {
+  const card = document.getElementById("mealCard");
+  card.innerHTML = "";
+  const isToday = selectedDay === DAY_NAMES[todayIndex()];
+
+  const head = document.createElement("div");
+  head.className = "meal-card-head";
+
+  const left = document.createElement("div");
+  left.className = "meal-card-head-left";
+  left.innerHTML =
+    '<span class="day-name">' + selectedDay + '</span>' +
+    (isToday ? '<span class="today-pill">今日</span>' : '');
+  head.appendChild(left);
+
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.className = "card-clear-btn";
+  clearBtn.textContent = "空にする";
+  clearBtn.addEventListener("click", async () => {
+    scheduleData[selectedDay] = { breakfast: "", lunch: "", dinner: "" };
+    renderMealCard();
+    await saveSchedule();
+  });
+  head.appendChild(clearBtn);
+
+  card.appendChild(head);
+
+  MEAL_TYPES.forEach(meal => {
+    const row = document.createElement("div");
+    row.className = "meal-row";
+
+    const label = document.createElement("div");
+    label.className = "meal-label";
+    label.innerHTML =
+      '<span class="name">' + meal.label + '</span>' +
+      '<span class="time">♀' + meal.female + '　♂' + meal.male + '</span>';
+    row.appendChild(label);
+
+    const input = document.createElement("input");
+    input.className = "meal-input";
+    input.type = "text";
+    input.placeholder = meal.placeholder;
+    input.value = scheduleData[selectedDay][meal.key] || "";
+    input.addEventListener("change", () => {
+      scheduleData[selectedDay][meal.key] = input.value;
+      saveSchedule();
+    });
+    row.appendChild(input);
+
+    card.appendChild(row);
+  });
+}
+
+function renderDaySelector() {
+  const container = document.getElementById("daySelector");
+  container.innerHTML = "";
+  DAY_NAMES.forEach((day, i) => {
+    const pill = document.createElement("div");
+    pill.className = "day-pill" + (day === selectedDay ? " active" : "");
+    pill.textContent = DAY_SHORT[i];
+    pill.addEventListener("click", () => {
+      selectedDay = day;
+      renderMealCard();
+      renderDaySelector();
+    });
+    container.appendChild(pill);
+  });
+}
+
+/* ============ Schedule ============ */
+
+const SCHEDULE_KEY = "meal-schedule:entries";
+let scheduleEntries = [];
+
+const now = new Date();
+function toDateStr(y, m, d) {
+  return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+}
+let pickedDate = null;
+let calendarOpen = false;
+let calYear = now.getFullYear();
+let calMonth = now.getMonth();
+
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d.getTime())) return dateStr;
+  return (d.getMonth() + 1) + "/" + d.getDate() + "(" + WEEKDAY_JP[d.getDay()] + ")";
+}
+
+function renderCalendar() {
+  const pop = document.getElementById("calendarPop");
+  pop.innerHTML = "";
+  pop.classList.toggle("open", calendarOpen);
+  if (!calendarOpen) return;
+
+  const head = document.createElement("div");
+  head.className = "cal-head";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.type = "button";
+  prevBtn.className = "cal-nav";
+  prevBtn.textContent = "‹";
+  prevBtn.addEventListener("click", () => {
+    calMonth -= 1;
+    if (calMonth < 0) { calMonth = 11; calYear -= 1; }
+    renderCalendar();
+  });
+  head.appendChild(prevBtn);
+
+  const label = document.createElement("span");
+  label.className = "label";
+  label.textContent = calYear + "年 " + (calMonth + 1) + "月";
+  head.appendChild(label);
+
+  const nextBtn = document.createElement("button");
+  nextBtn.type = "button";
+  nextBtn.className = "cal-nav";
+  nextBtn.textContent = "›";
+  nextBtn.addEventListener("click", () => {
+    calMonth += 1;
+    if (calMonth > 11) { calMonth = 0; calYear += 1; }
+    renderCalendar();
+  });
+  head.appendChild(nextBtn);
+
+  pop.appendChild(head);
+
+  const grid = document.createElement("div");
+  grid.className = "cal-grid";
+
+  WEEKDAY_JP_ORDER().forEach(d => {
+    const dow = document.createElement("div");
+    dow.className = "cal-dow";
+    dow.textContent = d;
+    grid.appendChild(dow);
+  });
+
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = toDateStr(now.getFullYear(), now.getMonth(), now.getDate());
+
+  for (let i = 0; i < firstDow; i++) {
+    const empty = document.createElement("div");
+    empty.className = "cal-day empty";
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = toDateStr(calYear, calMonth, d);
+    const cell = document.createElement("div");
+    cell.className = "cal-day";
+    if (dateStr === todayStr) cell.classList.add("today");
+    if (dateStr === pickedDate) cell.classList.add("selected");
+    cell.textContent = d;
+    cell.addEventListener("click", () => {
+      pickedDate = dateStr;
+      calendarOpen = false;
+      renderCalendar();
+      openScheduleInput();
+    });
+    grid.appendChild(cell);
+  }
+
+  pop.appendChild(grid);
+}
+
+function WEEKDAY_JP_ORDER() { return ["日", "月", "火", "水", "木", "金", "土"]; }
+
+function openScheduleInput() {
+  const row = document.getElementById("scheduleInputRow");
+  const label = document.getElementById("selectedDateLabel");
+  label.textContent = formatDisplayDate(pickedDate) + " の予定";
+  row.classList.add("open");
+  document.getElementById("scheduleText").focus();
+}
+
+function closeScheduleInput() {
+  const row = document.getElementById("scheduleInputRow");
+  row.classList.remove("open");
+  document.getElementById("scheduleText").value = "";
+  pickedDate = null;
+}
+
+document.getElementById("scheduleStartBtn").addEventListener("click", () => {
+  closeScheduleInput();
+  calendarOpen = true;
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCalendar();
+});
+
+document.getElementById("scheduleAddBtn").addEventListener("click", async () => {
+  const textInput = document.getElementById("scheduleText");
+  const text = textInput.value.trim();
+  if (!text) {
+    showStatus("内容を入力してください");
+    return;
+  }
+  if (!pickedDate) {
+    showStatus("日付を選んでください");
+    return;
+  }
+  scheduleEntries.push({ id: Date.now().toString(), date: pickedDate, text: text });
+  closeScheduleInput();
+  renderTasks();
+  await saveScheduleEntries();
+});
+
+function saveScheduleEntries() {
+  try {
+    localStorage.setItem(SCHEDULE_KEY, JSON.stringify(scheduleEntries));
+    showStatus("保存しました");
+  } catch (e) {
+    showStatus("保存に失敗しました", true);
+  }
+}
+
+function renderTasks() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  if (scheduleEntries.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "task-empty";
+    empty.textContent = "スケジュールはまだありません";
+    list.appendChild(empty);
+    return;
+  }
+
+  const sorted = [...scheduleEntries].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+
+  sorted.forEach(entry => {
+    const item = document.createElement("div");
+    item.className = "task-item";
+
+    const dateEl = document.createElement("span");
+    dateEl.className = "task-date";
+    dateEl.textContent = formatDisplayDate(entry.date);
+    item.appendChild(dateEl);
+
+    const textEl = document.createElement("span");
+    textEl.className = "task-text";
+    textEl.textContent = entry.text;
+    item.appendChild(textEl);
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "task-del";
+    delBtn.textContent = "×";
+    delBtn.addEventListener("click", async () => {
+      scheduleEntries = scheduleEntries.filter(t => t.id !== entry.id);
+      renderTasks();
+      await saveScheduleEntries();
+    });
+    item.appendChild(delBtn);
+
+    list.appendChild(item);
+  });
+}
+
+function initSchedule() {
+  try {
+    const raw = localStorage.getItem(SCHEDULE_KEY);
+    scheduleEntries = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    scheduleEntries = [];
+  }
+  renderTasks();
+}
+
+function init() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      scheduleData = mergeWithDefaults(JSON.parse(raw));
+    } else {
+      scheduleData = mergeWithDefaults(DEFAULT_DATA);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleData));
+    }
+  } catch (e) {
+    scheduleData = mergeWithDefaults(DEFAULT_DATA);
+  }
+  renderMealCard();
+  renderDaySelector();
+  initSchedule();
+}
+
+init();
+</script>
+</body>
+</html>
