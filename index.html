@@ -229,6 +229,212 @@
 
   .food-group:last-child { margin-bottom: 0; }
 
+  /* ---------- Expense tracker ---------- */
+
+  .expense-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px 20px 6px;
+    box-shadow: 0 8px 24px rgba(60, 50, 30, 0.06);
+    margin-bottom: 10px;
+  }
+
+  .expense-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .expense-row:first-child { border-top: none; }
+
+  .expense-daylabel {
+    flex: 0 0 64px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+
+  .expense-daylabel .d {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .expense-daylabel .w {
+    font-size: 10px;
+    color: var(--ink-faint);
+  }
+
+  .expense-row.is-today .expense-daylabel .d { color: var(--accent); }
+
+  .expense-yen-prefix {
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  .expense-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 3px 2px 6px;
+    text-align: right;
+  }
+
+  .expense-input::placeholder { color: var(--ink-faint); }
+
+  .expense-input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  .stats-bar {
+    display: flex;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px 4px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(60, 50, 30, 0.05);
+  }
+
+  .stat-cell {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 0 4px;
+    position: relative;
+  }
+
+  .stat-cell + .stat-cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .stat-cell .label {
+    display: block;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+
+  .stat-cell .value {
+    display: block;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .stat-cell.accent .value { color: var(--accent); }
+
+  .reward-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 16px rgba(60, 50, 30, 0.05);
+  }
+
+  .reward-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .reward-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .reward-field {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 10px 8px 8px;
+  }
+
+  .reward-field label {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  .reward-field input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--ink);
+    padding: 2px 0;
+  }
+
+  .reward-field input::placeholder { color: var(--ink-faint); font-weight: 500; }
+
+  .reward-field input:focus { outline: none; }
+
+  .reward-add-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    background: var(--accent);
+    color: #FFFDFB;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    border-radius: 12px;
+    padding: 10px 0;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+
+  .reward-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .reward-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .reward-item .rd { color: var(--ink-faint); flex: 0 0 auto; }
+  .reward-item .rv { flex: 1 1 auto; color: var(--ink); }
+  .reward-item .rdel {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
   /* ---------- Schedule ---------- */
 
   .schedule-start-btn {
@@ -407,12 +613,33 @@
 <div class="wrap">
   <header>
     <h1>献立とスケジュール</h1>
-    <p>曜日をタップして切り替えられます・このブラウザに保存されます</p>
   </header>
 
   <div class="meal-card" id="mealCard"></div>
   <div class="day-selector" id="daySelector"></div>
   <div class="status" id="status"></div>
+
+  <div class="section-title">食費管理</div>
+
+  <div class="stats-bar" id="statsBar"></div>
+
+  <div class="expense-card" id="expenseCard"></div>
+
+  <div class="reward-card">
+    <div class="reward-hint">1000円安くなるごとに200円・200ptを記録できます</div>
+    <div class="reward-input-row">
+      <div class="reward-field">
+        <label for="rewardYenInput">円</label>
+        <input type="number" id="rewardYenInput" placeholder="0">
+      </div>
+      <div class="reward-field">
+        <label for="rewardPtInput">pt</label>
+        <input type="number" id="rewardPtInput" placeholder="0">
+      </div>
+    </div>
+    <button type="button" id="rewardAddBtn" class="reward-add-btn">記録する</button>
+    <div class="reward-list" id="rewardList"></div>
+  </div>
 
   <div class="section-title">食べ物</div>
   <div class="food-card">
@@ -473,17 +700,17 @@ const DAY_SHORT = ["月", "火", "水", "木", "金", "土", "日"];
 const WEEKDAY_JP = ["日", "月", "火", "水", "木", "金", "土"];
 
 const MEAL_TYPES = [
-  { key: "breakfast", label: "朝食", placeholder: "朝食を入力", female: "8:00", male: "10:00" },
-  { key: "lunch", label: "昼食", placeholder: "昼食を入力", female: "12:00", male: "12:00" },
-  { key: "dinner", label: "晩ご飯", placeholder: "夕食を入力", female: "19:00", male: "17:00" }
+  { key: "breakfast", label: "朝食", placeholder: "朝食を入力" },
+  { key: "lunch", label: "昼食", placeholder: "昼食を入力" },
+  { key: "dinner", label: "夕食", placeholder: "夕食を入力" }
 ];
 
 const DEFAULT_DATA = {
-  "月曜日": { dinner: "しゃけ" },
-  "火曜日": { dinner: "惣菜" },
+  "月曜日": {},
+  "火曜日": {},
   "水曜日": {},
-  "木曜日": { dinner: "しゃけ" },
-  "金曜日": { dinner: "惣菜" },
+  "木曜日": {},
+  "金曜日": {},
   "土曜日": {},
   "日曜日": {}
 };
@@ -566,9 +793,7 @@ function renderMealCard() {
 
     const label = document.createElement("div");
     label.className = "meal-label";
-    label.innerHTML =
-      '<span class="name">' + meal.label + '</span>' +
-      '<span class="time">♀' + meal.female + '　♂' + meal.male + '</span>';
+    label.innerHTML = '<span class="name">' + meal.label + '</span>';
     row.appendChild(label);
 
     const input = document.createElement("input");
@@ -601,6 +826,188 @@ function renderDaySelector() {
     container.appendChild(pill);
   });
 }
+
+/* ============ Expense tracker ============ */
+
+const EXPENSE_KEY = "meal-schedule:expenses";
+const REWARD_KEY = "meal-schedule:rewards";
+const WEEKLY_BUDGET = 23310;
+let expenseData = {};
+let rewardEntries = [];
+
+function pad2(n) { return String(n).padStart(2, "0"); }
+function dateKey(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+
+function getWeekDates() {
+  const today = new Date();
+  const idx = todayIndex(); // 0=Mon ... 6=Sun
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - idx);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function loadExpenses() {
+  try {
+    const raw = localStorage.getItem(EXPENSE_KEY);
+    expenseData = raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    expenseData = {};
+  }
+}
+
+function saveExpenses() {
+  try {
+    localStorage.setItem(EXPENSE_KEY, JSON.stringify(expenseData));
+    showStatus("保存しました");
+  } catch (e) {
+    showStatus("保存に失敗しました", true);
+  }
+}
+
+function renderExpenseCard() {
+  const card = document.getElementById("expenseCard");
+  card.innerHTML = "";
+  const weekDates = getWeekDates();
+  const todayKey = dateKey(new Date());
+
+  weekDates.forEach((d, i) => {
+    const key = dateKey(d);
+    const row = document.createElement("div");
+    row.className = "expense-row" + (key === todayKey ? " is-today" : "");
+
+    const label = document.createElement("div");
+    label.className = "expense-daylabel";
+    label.innerHTML =
+      '<span class="d">' + (d.getMonth() + 1) + '/' + d.getDate() + '</span>' +
+      '<span class="w">' + DAY_SHORT[i] + '</span>';
+    row.appendChild(label);
+
+    const prefix = document.createElement("span");
+    prefix.className = "expense-yen-prefix";
+    prefix.textContent = "¥";
+    row.appendChild(prefix);
+
+    const input = document.createElement("input");
+    input.className = "expense-input";
+    input.type = "number";
+    input.placeholder = "0";
+    input.value = expenseData[key] != null ? expenseData[key] : "";
+    input.addEventListener("change", () => {
+      const v = parseFloat(input.value);
+      if (input.value === "" || isNaN(v)) {
+        delete expenseData[key];
+      } else {
+        expenseData[key] = v;
+      }
+      saveExpenses();
+      renderStatsBar();
+    });
+    row.appendChild(input);
+
+    card.appendChild(row);
+  });
+
+  renderStatsBar();
+}
+
+function renderStatsBar() {
+  const el = document.getElementById("statsBar");
+  const weekDates = getWeekDates();
+  let total = 0;
+  weekDates.forEach(d => {
+    const v = expenseData[dateKey(d)];
+    if (typeof v === "number") total += v;
+  });
+  const totalYen = rewardEntries.reduce((s, r) => s + (r.yen || 0), 0);
+  const totalPt = rewardEntries.reduce((s, r) => s + (r.pt || 0), 0);
+
+  el.innerHTML =
+    '<div class="stat-cell"><span class="label">予算</span><span class="value">¥' + WEEKLY_BUDGET.toLocaleString() + '</span></div>' +
+    '<div class="stat-cell"><span class="label">今週の合計</span><span class="value">¥' + total.toLocaleString() + '</span></div>' +
+    '<div class="stat-cell accent"><span class="label">円</span><span class="value">¥' + totalYen.toLocaleString() + '</span></div>' +
+    '<div class="stat-cell accent"><span class="label">pt</span><span class="value">' + totalPt.toLocaleString() + '</span></div>';
+}
+
+/* ---- reward log ---- */
+
+function loadRewards() {
+  try {
+    const raw = localStorage.getItem(REWARD_KEY);
+    rewardEntries = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    rewardEntries = [];
+  }
+}
+
+function saveRewards() {
+  try {
+    localStorage.setItem(REWARD_KEY, JSON.stringify(rewardEntries));
+    showStatus("保存しました");
+  } catch (e) {
+    showStatus("保存に失敗しました", true);
+  }
+}
+
+function renderRewards() {
+  const list = document.getElementById("rewardList");
+  list.innerHTML = "";
+  const sorted = [...rewardEntries].sort((a, b) => (b.id || "").localeCompare(a.id || ""));
+  sorted.slice(0, 20).forEach(entry => {
+    const item = document.createElement("div");
+    item.className = "reward-item";
+
+    const dateEl = document.createElement("span");
+    dateEl.className = "rd";
+    dateEl.textContent = entry.dateLabel || "";
+    item.appendChild(dateEl);
+
+    const valEl = document.createElement("span");
+    valEl.className = "rv";
+    valEl.textContent = "¥" + (entry.yen || 0).toLocaleString() + " ・ " + (entry.pt || 0) + "pt";
+    item.appendChild(valEl);
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "rdel";
+    delBtn.textContent = "×";
+    delBtn.addEventListener("click", () => {
+      rewardEntries = rewardEntries.filter(r => r.id !== entry.id);
+      saveRewards();
+      renderRewards();
+      renderStatsBar();
+    });
+    item.appendChild(delBtn);
+
+    list.appendChild(item);
+  });
+  renderStatsBar();
+}
+
+document.getElementById("rewardAddBtn").addEventListener("click", () => {
+  const yenInput = document.getElementById("rewardYenInput");
+  const ptInput = document.getElementById("rewardPtInput");
+  const yen = parseFloat(yenInput.value) || 0;
+  const pt = parseFloat(ptInput.value) || 0;
+  if (!yen && !pt) {
+    showStatus("円かptを入力してください");
+    return;
+  }
+  const now = new Date();
+  rewardEntries.push({
+    id: Date.now().toString(),
+    yen: yen,
+    pt: pt,
+    dateLabel: (now.getMonth() + 1) + "/" + now.getDate()
+  });
+  yenInput.value = "";
+  ptInput.value = "";
+  saveRewards();
+  renderRewards();
+});
 
 /* ============ Schedule ============ */
 
@@ -818,6 +1225,10 @@ function init() {
   }
   renderMealCard();
   renderDaySelector();
+  loadExpenses();
+  renderExpenseCard();
+  loadRewards();
+  renderRewards();
   initSchedule();
 }
 
